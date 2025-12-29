@@ -1357,7 +1357,7 @@ const UserDashboard = () => {
               </Popover>
               <Button onClick={handleSaveLayout} className="gap-2" disabled={savePreferencesMutation.isPending}>
                 <Check className="w-4 h-4" />
-                {savePreferencesMutation.isPending ? 'Saving...' : 'Done'}
+                {savePreferencesMutation.isPending ? 'Saving...' : 'Save'}
               </Button>
             </>
           ) : (
