@@ -255,6 +255,48 @@ const UserDashboard = () => {
     return isPending ? !isCurrentlyVisible : isCurrentlyVisible;
   }, [visibleWidgets, pendingWidgetChanges]);
 
+  // Compact layouts vertically to remove gaps
+  const compactLayouts = useCallback((layouts: WidgetLayoutConfig, visibleKeys: WidgetKey[]): WidgetLayoutConfig => {
+    const COLS = 12;
+    
+    // Convert to array and filter only visible widgets
+    const items = visibleKeys
+      .filter(key => layouts[key])
+      .map(key => ({ key, ...layouts[key] }))
+      .sort((a, b) => a.y - b.y || a.x - b.x);
+    
+    const compacted: WidgetLayoutConfig = {};
+    const grid: boolean[][] = [];
+    
+    items.forEach(item => {
+      // Find the lowest y position this item can occupy
+      let newY = 0;
+      while (true) {
+        let fits = true;
+        for (let dy = 0; dy < item.h && fits; dy++) {
+          if (!grid[newY + dy]) grid[newY + dy] = new Array(COLS).fill(false);
+          for (let dx = 0; dx < item.w && fits; dx++) {
+            if (grid[newY + dy][item.x + dx]) fits = false;
+          }
+        }
+        if (fits) break;
+        newY++;
+      }
+      
+      // Mark grid cells as occupied
+      for (let dy = 0; dy < item.h; dy++) {
+        if (!grid[newY + dy]) grid[newY + dy] = new Array(COLS).fill(false);
+        for (let dx = 0; dx < item.w; dx++) {
+          grid[newY + dy][item.x + dx] = true;
+        }
+      }
+      
+      compacted[item.key] = { x: item.x, y: newY, w: item.w, h: item.h };
+    });
+    
+    return compacted;
+  }, []);
+
   // Find next available grid position for a widget
   const findNextGridPosition = useCallback((existingLayouts: WidgetLayoutConfig, widgetWidth: number, widgetHeight: number) => {
     const COLS = 12;
@@ -324,11 +366,14 @@ const UserDashboard = () => {
       }
     });
 
+    // Compact layouts to remove empty spaces
+    const compactedLayouts = compactLayouts(nextLayouts, nextVisible);
+
     setVisibleWidgets(nextVisible);
     setWidgetOrder(nextOrder);
-    setWidgetLayouts(nextLayouts);
+    setWidgetLayouts(compactedLayouts);
     setPendingWidgetChanges(new Set());
-  }, [pendingWidgetChanges, visibleWidgets, widgetOrder, widgetLayouts, findNextGridPosition]);
+  }, [pendingWidgetChanges, visibleWidgets, widgetOrder, widgetLayouts, findNextGridPosition, compactLayouts]);
 
   // Save layout and exit resize mode
   const handleSaveLayout = () => {
@@ -364,15 +409,18 @@ const UserDashboard = () => {
       }
     });
     
+    // Compact layouts to remove empty spaces
+    const compactedLayouts = compactLayouts(finalLayouts, finalVisible);
+    
     // Update local state
     setVisibleWidgets(finalVisible);
     setWidgetOrder(finalOrder);
-    setWidgetLayouts(finalLayouts);
+    setWidgetLayouts(compactedLayouts);
     
     savePreferencesMutation.mutate({
       widgets: finalVisible,
       order: finalOrder,
-      layouts: finalLayouts
+      layouts: compactedLayouts
     });
     setPendingWidgetChanges(new Set());
     setIsResizeMode(false);
