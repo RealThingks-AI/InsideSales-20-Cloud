@@ -1383,13 +1383,13 @@ const UserDashboard = () => {
                             {/* Top row: Badge + Resource + Timestamp */}
                             <div className="flex items-center justify-between gap-2 mb-0.5">
                               <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium flex-shrink-0 ${badge.class}`}>
-                                  {badge.text}
-                                </span>
                                 <span className="text-[10px] text-muted-foreground capitalize font-medium truncate">
                                   {activity.resource_type}
                                 </span>
                               </div>
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium flex-shrink-0 ${badge.class}`}>
+                                {badge.text}
+                              </span>
                               <TooltipProvider delayDuration={100}>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
