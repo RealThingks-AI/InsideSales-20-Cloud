@@ -121,12 +121,12 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Contacts */}
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Contacts ({contacts.length})
               </CardTitle>
@@ -134,35 +134,35 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
                 variant="ghost"
                 size="sm"
                 onClick={() => setAttachContactOpen(true)}
-                className="h-7 gap-1 text-xs"
+                className="h-6 gap-1 text-xs px-2"
               >
                 <Plus className="h-3 w-3" />
-                Add Contact
+                Add
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {contacts.length === 0 ? (
-              <div className="text-center py-6 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto">
-                  <User className="h-6 w-6 text-muted-foreground" />
+              <div className="text-center py-4 space-y-2">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto">
+                  <User className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">No contacts yet</p>
+                  <p className="text-xs font-medium">No contacts yet</p>
                   <p className="text-xs text-muted-foreground">Add contacts to track relationships</p>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setAttachContactOpen(true)}
-                  className="gap-1"
+                  className="gap-1 h-7 text-xs"
                 >
                   <Plus className="h-3 w-3" />
                   Add First Contact
                 </Button>
               </div>
             ) : (
-              <ScrollArea className="h-[200px]">
+              <ScrollArea className="h-[150px]">
                 <div className="space-y-2">
                   {contacts.map((contact) => (
                     <div
@@ -170,21 +170,21 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
                       className="flex items-center justify-between p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm truncate">{contact.contact_name}</p>
+                        <p className="font-medium text-xs truncate">{contact.contact_name}</p>
                         {contact.position && (
                           <p className="text-xs text-muted-foreground truncate">{contact.position}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-1 ml-2">
                         {contact.email && (
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0" asChild>
                             <a href={`mailto:${contact.email}`}>
                               <Mail className="h-3 w-3" />
                             </a>
                           </Button>
                         )}
                         {contact.phone_no && (
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0" asChild>
                             <a href={`tel:${contact.phone_no}`}>
                               <Phone className="h-3 w-3" />
                             </a>
@@ -200,10 +200,10 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full mt-3"
+                className="w-full mt-2 h-7 text-xs"
                 onClick={() => navigate('/contacts')}
               >
-                View All Contacts
+                View All
                 <ExternalLink className="h-3 w-3 ml-1" />
               </Button>
             )}
@@ -214,7 +214,7 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <Briefcase className="h-4 w-4" />
                 Deals ({deals.length})
               </CardTitle>
@@ -222,35 +222,35 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
                 variant="ghost"
                 size="sm"
                 onClick={() => setAttachDealOpen(true)}
-                className="h-7 gap-1 text-xs"
+                className="h-6 gap-1 text-xs px-2"
               >
                 <Plus className="h-3 w-3" />
-                Add Deal
+                Add
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {deals.length === 0 ? (
-              <div className="text-center py-6 space-y-3">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto">
-                  <Briefcase className="h-6 w-6 text-muted-foreground" />
+              <div className="text-center py-4 space-y-2">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto">
+                  <Briefcase className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">No deals yet</p>
+                  <p className="text-xs font-medium">No deals yet</p>
                   <p className="text-xs text-muted-foreground">Create deals to track opportunities</p>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setAttachDealOpen(true)}
-                  className="gap-1"
+                  className="gap-1 h-7 text-xs"
                 >
                   <Plus className="h-3 w-3" />
                   Add First Deal
                 </Button>
               </div>
             ) : (
-              <ScrollArea className="h-[200px]">
+              <ScrollArea className="h-[150px]">
                 <div className="space-y-2">
                   {deals.map((deal) => (
                     <div
@@ -259,14 +259,14 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
                       onClick={() => navigate(`/deals?viewId=${deal.id}`)}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm truncate">{deal.deal_name}</p>
+                        <p className="font-medium text-xs truncate">{deal.deal_name}</p>
                         {deal.total_contract_value && (
                           <p className="text-xs text-muted-foreground">
                             ${deal.total_contract_value.toLocaleString()}
                           </p>
                         )}
                       </div>
-                      <Badge className={`ml-2 ${getStageColor(deal.stage)}`}>
+                      <Badge className={`ml-2 text-xs ${getStageColor(deal.stage)}`}>
                         {deal.stage}
                       </Badge>
                     </div>
@@ -278,92 +278,94 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full mt-3"
+                className="w-full mt-2 h-7 text-xs"
                 onClick={() => navigate('/deals')}
               >
-                View All Deals
+                View All
+                <ExternalLink className="h-3 w-3 ml-1" />
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Leads */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Leads ({leads.length})
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setAttachLeadOpen(true)}
+                className="h-6 gap-1 text-xs px-2"
+              >
+                <Plus className="h-3 w-3" />
+                Add
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {leads.length === 0 ? (
+              <div className="text-center py-4 space-y-2">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto">
+                  <UserPlus className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium">No leads yet</p>
+                  <p className="text-xs text-muted-foreground">Add leads to track opportunities</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAttachLeadOpen(true)}
+                  className="gap-1 h-7 text-xs"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add First Lead
+                </Button>
+              </div>
+            ) : (
+              <ScrollArea className="h-[150px]">
+                <div className="space-y-2">
+                  {leads.map((lead) => (
+                    <div
+                      key={lead.id}
+                      className="flex items-center justify-between p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
+                      onClick={() => navigate(`/leads?viewId=${lead.id}`)}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-xs truncate">{lead.lead_name}</p>
+                        {lead.email && (
+                          <p className="text-xs text-muted-foreground truncate">{lead.email}</p>
+                        )}
+                      </div>
+                      {lead.lead_status && (
+                        <Badge className={`ml-2 text-xs ${getLeadStatusColor(lead.lead_status)}`}>
+                          {lead.lead_status}
+                        </Badge>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            )}
+            {leads.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full mt-2 h-7 text-xs"
+                onClick={() => navigate('/leads')}
+              >
+                View All
                 <ExternalLink className="h-3 w-3 ml-1" />
               </Button>
             )}
           </CardContent>
         </Card>
       </div>
-
-      {/* Leads */}
-      <Card>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2">
-              <UserPlus className="h-4 w-4" />
-              Leads ({leads.length})
-            </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setAttachLeadOpen(true)}
-              className="h-7 gap-1 text-xs"
-            >
-              <Plus className="h-3 w-3" />
-              Add Lead
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {leads.length === 0 ? (
-            <div className="text-center py-6 space-y-3">
-              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mx-auto">
-                <UserPlus className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">No leads yet</p>
-                <p className="text-xs text-muted-foreground">Add leads to track potential opportunities</p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAttachLeadOpen(true)}
-                className="gap-1"
-              >
-                <Plus className="h-3 w-3" />
-                Add First Lead
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-              {leads.slice(0, 6).map((lead) => (
-                <div
-                  key={lead.id}
-                  className="flex items-center justify-between p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
-                  onClick={() => navigate(`/leads?viewId=${lead.id}`)}
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm truncate">{lead.lead_name}</p>
-                    {lead.email && (
-                      <p className="text-xs text-muted-foreground truncate">{lead.email}</p>
-                    )}
-                  </div>
-                  {lead.lead_status && (
-                    <Badge className={`ml-2 text-xs ${getLeadStatusColor(lead.lead_status)}`}>
-                      {lead.lead_status}
-                    </Badge>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-          {leads.length > 6 && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full mt-3"
-              onClick={() => navigate('/leads')}
-            >
-              View All {leads.length} Leads
-              <ExternalLink className="h-3 w-3 ml-1" />
-            </Button>
-          )}
-        </CardContent>
-      </Card>
 
       {/* Attach Modals */}
       <AttachRecordModal
