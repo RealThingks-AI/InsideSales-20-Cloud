@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { User, Briefcase, ExternalLink, Loader2, Mail, Phone, Plus, UserPlus, Calendar, CheckSquare } from "lucide-react";
+import { User, Briefcase, ExternalLink, Loader2, Mail, Phone, Plus, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import { AttachRecordModal } from "@/components/shared/AttachRecordModal";
 
 interface Contact {
   id: string;
@@ -32,21 +32,6 @@ interface Lead {
   company_name?: string;
 }
 
-interface Task {
-  id: string;
-  title: string;
-  status: string;
-  priority: string;
-  due_date?: string | null;
-}
-
-interface Meeting {
-  id: string;
-  subject: string;
-  start_time: string;
-  status: string;
-}
-
 interface AccountAssociationsProps {
   accountId: string;
   companyName: string;
@@ -57,9 +42,12 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Modal states
+  const [attachContactOpen, setAttachContactOpen] = useState(false);
+  const [attachDealOpen, setAttachDealOpen] = useState(false);
+  const [attachLeadOpen, setAttachLeadOpen] = useState(false);
 
   useEffect(() => {
     fetchAssociations();
@@ -76,7 +64,6 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
 
       setContacts(contactData || []);
 
-      // Fetch deals by account_id (proper FK relationship)
       const { data: dealData } = await supabase
         .from('deals')
         .select('id, deal_name, stage, total_contract_value, probability')
@@ -85,7 +72,6 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
 
       setDeals(dealData || []);
 
-      // Fetch leads by account_id
       const { data: leadData } = await supabase
         .from('leads')
         .select('id, lead_name, lead_status, email, company_name')
@@ -93,26 +79,6 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
         .order('created_time', { ascending: false });
 
       setLeads(leadData || []);
-
-      // Fetch tasks by account_id
-      const { data: taskData } = await supabase
-        .from('tasks')
-        .select('id, title, status, priority, due_date')
-        .eq('account_id', accountId)
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      setTasks(taskData || []);
-
-      // Fetch meetings by account_id
-      const { data: meetingData } = await supabase
-        .from('meetings')
-        .select('id, subject, start_time, status')
-        .eq('account_id', accountId)
-        .order('start_time', { ascending: false })
-        .limit(6);
-
-      setMeetings(meetingData || []);
     } catch (error) {
       console.error('Error fetching associations:', error);
     } finally {
@@ -167,7 +133,7 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate(`/contacts?createFor=${accountId}&companyName=${encodeURIComponent(companyName)}`)}
+                onClick={() => setAttachContactOpen(true)}
                 className="h-7 gap-1 text-xs"
               >
                 <Plus className="h-3 w-3" />
@@ -188,7 +154,7 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/contacts?createFor=${accountId}&companyName=${encodeURIComponent(companyName)}`)}
+                  onClick={() => setAttachContactOpen(true)}
                   className="gap-1"
                 >
                   <Plus className="h-3 w-3" />
@@ -255,7 +221,7 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate(`/deals?createFor=${accountId}&customerName=${encodeURIComponent(companyName)}`)}
+                onClick={() => setAttachDealOpen(true)}
                 className="h-7 gap-1 text-xs"
               >
                 <Plus className="h-3 w-3" />
@@ -276,7 +242,7 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/deals?createFor=${accountId}&customerName=${encodeURIComponent(companyName)}`)}
+                  onClick={() => setAttachDealOpen(true)}
                   className="gap-1"
                 >
                   <Plus className="h-3 w-3" />
@@ -334,7 +300,7 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate(`/leads?createFor=${accountId}&companyName=${encodeURIComponent(companyName)}`)}
+              onClick={() => setAttachLeadOpen(true)}
               className="h-7 gap-1 text-xs"
             >
               <Plus className="h-3 w-3" />
@@ -355,7 +321,7 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate(`/leads?createFor=${accountId}&companyName=${encodeURIComponent(companyName)}`)}
+                onClick={() => setAttachLeadOpen(true)}
                 className="gap-1"
               >
                 <Plus className="h-3 w-3" />
@@ -398,6 +364,37 @@ export const AccountAssociations = ({ accountId, companyName }: AccountAssociati
           )}
         </CardContent>
       </Card>
+
+      {/* Attach Modals */}
+      <AttachRecordModal
+        open={attachContactOpen}
+        onOpenChange={setAttachContactOpen}
+        recordType="contact"
+        parentId={accountId}
+        parentField="account_id"
+        title="Attach Contacts to Account"
+        onSuccess={fetchAssociations}
+      />
+
+      <AttachRecordModal
+        open={attachDealOpen}
+        onOpenChange={setAttachDealOpen}
+        recordType="deal"
+        parentId={accountId}
+        parentField="account_id"
+        title="Attach Deals to Account"
+        onSuccess={fetchAssociations}
+      />
+
+      <AttachRecordModal
+        open={attachLeadOpen}
+        onOpenChange={setAttachLeadOpen}
+        recordType="lead"
+        parentId={accountId}
+        parentField="account_id"
+        title="Attach Leads to Account"
+        onSuccess={fetchAssociations}
+      />
     </div>
   );
 };
